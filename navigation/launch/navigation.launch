@@ -1,0 +1,32 @@
+<launch>
+  <!-- gmapping -->
+  <node pkg="gmapping" type="slam_gmapping" name="gmapping_thing" output="screen" >
+    <remap from="scan" to="sick_scan2" />
+  </node>
+
+  <!-- move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
+    <remap from="scan" to="sick_scan2"/>
+    <!-- <remap from="cmd_vel" to="temp_cmd_vel"/> -->
+
+    <param name="base_local_planner" value="eband_local_planner/EBandPlannerROS"/>
+    <param name="footprint_padding" value="0.0" />
+    <param name="controller_frequency" value="30.0" />
+    <param name="controller_patience" value="3.0" />
+    <!-- <param name="recovery_behavior_enabled" value="true"/> -->
+    <param name="oscillation_timeout" value="20.0" />
+    <param name="oscillation_distance" value="0.5" />
+    <param name="planner_frequency" value="0.1" />
+    <param name="max_planning_retries" value="2" />
+
+    <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find navigation)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find navigation)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find navigation)/config/eband_local_planner_params.yaml" command="load" />
+  </node>
+
+  <!-- rviz -->
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+        args="-d $(find habitat_ros)/rviz/example.rviz"/>
+</launch>
